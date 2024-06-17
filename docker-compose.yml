@@ -1,0 +1,55 @@
+services:
+  sveltekit:
+    container_name: sveltekit
+    image: sveltekit
+    build:
+      context: .
+      dockerfile: Dockerfile
+    user: node
+    environment:
+      - NODE_ENV=production
+      - TZ=Germany/Berlin
+    env_file:
+      - .env
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+
+  database:
+    container_name: database-pg
+    image: postgres:latest
+    volumes:
+      - ./directus/database:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=directus
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_USER=user
+    ports:
+      - 3002:5432
+
+  directus:
+    container_name: cms-directus
+    image: directus/directus:latest
+    ports:
+      - 3001:8055
+    volumes:
+      - ./directus/uploads:/directus/uploads
+      - ./directus/extensions:/directus/extensions
+    depends_on:
+      - sveltekit
+      - database
+    environment:
+      SECRET: 'ewkuhrewkldnfw3284242efwer'
+
+      DB_CLIENT: 'pg'
+      DB_HOST: 'database'
+      DB_PORT: '5432'
+      DB_DATABASE: 'directus'
+      DB_USER: 'user'
+      DB_PASSWORD: 'secret'
+
+      ADMIN_EMAIL: 'admin@redirent.de'
+      ADMIN_PASSWORD: 'redirent'
+
+      CORS_ENABLED: true
+      CORS_ORIGIN: '*'

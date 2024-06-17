@@ -1,0 +1,11 @@
+.gitignore
+.prettierrc
+.prettierignore
+README.md
+node_modules
+build
+.svelte_kit
+./directus/database/*
+./directus/extensions/*
+./directus/migrations/*
+./directus
