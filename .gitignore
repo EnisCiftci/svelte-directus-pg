@@ -23,3 +23,6 @@ vite.config.ts.timestamp-*
 directus/database/*
 directus/uploads/*
 directus/extensions/*
+!directus/database/.gitkeep
+!directus/uploads/.gitkeep
+!directus/extensions/.gitkeep
