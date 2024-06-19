@@ -20,6 +20,7 @@ Thumbs.db
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
+# Directus
 directus/database/*
 directus/uploads/*
 directus/extensions/*
