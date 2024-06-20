@@ -1,17 +1,17 @@
-FROM node:20-alpine AS sveltekit
-
+FROM node:20-alpine AS builder
+ARG PUBLIC_DIRECTUS_URL
+ENV PUBLIC_DIRECTUS_URL $PUBLIC_DIRECTUS_URL
 WORKDIR /app
-
+COPY package*.json .
+RUN npm i --force
 COPY . .
+RUN npm run build
 
-RUN npm install --force
-
-RUN npm run build 
-
-RUN rm -rf src/ static/ docker-compose.yml
-
-USER node:node
-
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/build build/
+COPY --from=builder /app/node_modules node_modules/
+COPY package.json .
 EXPOSE 3000
-
-CMD ["node", "build/index.js"]
+ENV NODE_ENV=production
+CMD [ "node", "build" ]
