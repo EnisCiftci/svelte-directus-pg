@@ -1,47 +1,55 @@
 services:
-  svelte:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        PUBLIC_DIRECTUS_URL: ${PUBLIC_DIRECTUS_URL}
-    user: node
-    environment:
-      NODE_ENV: production
-      TZ: Europe/Berlin
-    env_file:
-      - .env
-    restart: unless-stopped
+    svelte:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                PUBLIC_DIRECTUS_URL: ${PUBLIC_DIRECTUS_URL}
+        user: node
+        environment:
+            NODE_ENV: production
+            TZ: ${NODE_TZ}
+        env_file:
+            - .env
+        restart: unless-stopped
 
-  database:
-    image: postgres:latest
-    volumes:
-      - ./directus/database:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_USER: ${POSTGRES_USER}
+    database:
+        image: postgres:latest
+        volumes:
+            - ./directus/database:/var/lib/postgresql/data
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_USER: ${POSTGRES_USER}
 
-  directus:
-    image: directus/directus:latest
-    volumes:
-      - ./directus/uploads:/directus/uploads
-      - ./directus/extensions:/directus/extensions
-    depends_on:
-      - svelte
-      - database
-    environment:
-      SECRET: ${DIRECTUS_SECRET}
+    directus:
+        image: directus/directus:latest
+        volumes:
+            - ./directus/uploads:/directus/uploads
+            - ./directus/extensions:/directus/extensions
+        depends_on:
+            - svelte
+            - database
+        environment:
+            SECRET: ${DIRECTUS_SECRET}
 
-      DB_CLIENT: "pg"
-      DB_HOST: "database"
-      DB_PORT: "5432"
-      DB_DATABASE: ${POSTGRES_DB}
-      DB_USER: ${POSTGRES_USER}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
+            DB_CLIENT: "pg"
+            DB_HOST: "database"
+            DB_PORT: "5432"
+            DB_DATABASE: ${POSTGRES_DB}
+            DB_USER: ${POSTGRES_USER}
+            DB_PASSWORD: ${POSTGRES_PASSWORD}
 
-      ADMIN_EMAIL: ${ADMIN_EMAIL}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+            ADMIN_EMAIL: ${ADMIN_EMAIL}
+            ADMIN_PASSWORD: ${ADMIN_PASSWORD}
 
-      CORS_ENABLED: true
-      CORS_ORIGIN: "*"
+            CORS_ENABLED: true
+            CORS_ORIGIN: ${CORS_ORIGIN}
+
+            EMAIL_FROM: ${MAILERSEND_FROM}
+            EMAIL_TRANSPORT: smtp
+
+            EMAIL_SMTP_HOST: ${MAILERSEND_SMTP_HOST}
+            EMAIL_SMTP_PORT: ${MAILERSEND_SMTP_PORT}
+            EMAIL_SMTP_USER: ${MAILERSEND_SMTP_USER}
+            EMAIL_SMTP_PASSWORD: ${MAILERSEND_SMTP_PASSWORD}
