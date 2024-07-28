@@ -5,4 +5,3 @@
 </script>
 
 <h1>{data.global}</h1>
-<p>{data.global}</p>
